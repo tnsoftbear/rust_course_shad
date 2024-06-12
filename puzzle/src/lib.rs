@@ -5,6 +5,7 @@ use std::collections::{HashMap, HashSet, VecDeque};
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Represents a tile on a board. A tile can either be empty or a number from 1 to 8.
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Tile(u8);
 
 impl Tile {
@@ -18,32 +19,36 @@ impl Tile {
     ///
     /// Panics if value is 0 or > 8.
     pub fn new(maybe_value: Option<u8>) -> Self {
-        // TODO: your code here.
-        unimplemented!()
+        match maybe_value {
+            Some(value @ 1..=8) => Self(value),
+            None => Self(0),
+            _ => panic!("Tile value must be 1,2,3,4,5,6,7,8")
+        }
     }
 
     /// Creates an empty tile.
     pub fn empty() -> Self {
-        // TODO: your code here.
-        unimplemented!()
+        Self(0)
     }
 
     /// Returns `Some(value)` if tile contains a value, otherwise returns `None`.
     pub fn number(&self) -> Option<u8> {
-        // TODO: your code here.
-        unimplemented!()
+        match self.0 {
+            1..=8 => Some(self.0),
+            _ => None
+        }
     }
 
     /// Returns true if tile does not contain a value.
     pub fn is_empty(&self) -> bool {
-        // TODO: your code here.
-        unimplemented!()
+        self.number().is_none()
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Represents a 3x3 board of tiles.
+#[derive(Debug, PartialEq)]
 pub struct Board {
     tiles: [[Tile; 3]; 3],
 }
@@ -55,8 +60,9 @@ impl Board {
     ///
     /// Panics if `tiles` contains more than one instance if some tile.
     pub fn new(tiles: [[Tile; 3]; 3]) -> Self {
-        // TODO: your code here.
-        unimplemented!()
+        Self {
+            tiles
+        }
     }
 
     /// Returns a tile on a given `row` and `col`.
@@ -65,8 +71,7 @@ impl Board {
     ///
     /// Panics if `row` or `col` > 2.
     pub fn get(&self, row: usize, col: usize) -> Tile {
-        // TODO: your code here.
-        unimplemented!()
+        self.tiles[row][col]
     }
 
     /// Swaps two given tiles.
@@ -75,8 +80,9 @@ impl Board {
     ///
     /// Panics if some of `r1`, `r2`, `c1` or `c2` > 2.
     pub fn swap(&mut self, r1: usize, c1: usize, r2: usize, c2: usize) {
-        // TODO: your code here.
-        unimplemented!()
+        let tile1 = self.tiles[r1][c1];
+        self.tiles[r1][c1] = self.tiles[r2][c2];
+        self.tiles[r2][c2] = tile1;
     }
 
     /// Parses `Board` from string.
@@ -95,8 +101,9 @@ impl Board {
     ///
     /// Panics of `s` is the wrong format or does not represent a valid `Board`.
     pub fn from_string(s: &str) -> Self {
-        // TODO: your code here.
-        unimplemented!()
+        for line in s.split("\n") {
+
+        }
     }
 
     /// Returns a string representation of this board in the following format:

@@ -3,4 +3,5 @@
 **/target
 **/test_artifacts
 **/vendor
+**/.idea
 Cargo.lock
