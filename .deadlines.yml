@@ -1,0 +1,119 @@
+- group:    Bonus
+  start:    01-12-2021 08:00
+  deadline: 31-01-2022 23:59
+  tasks:
+    - task: chat
+      score: 400
+    - task: arrayvec
+      score: 100
+    - task: snapshot
+      score: 200
+
+- group:    Async
+  start:    01-12-2021 08:00
+  deadline: 20-12-2021 19:30
+  tasks:
+    - task: crawler
+      score: 200
+
+- group:    Project 3
+  start:    17-11-2021 19:30
+  deadline: 15-12-2021 19:30
+  tasks:
+    - task: babencoin
+      score: 1
+
+- group:    Networking
+  start:    10-11-2021 19:30
+  deadline: 24-11-2021 19:30
+  tasks:
+    - task: tcp_proxy
+      score: 200
+
+- group:    Multithreading
+  start:    03-11-2021 19:30
+  deadline: 20-11-2021 19:30
+  tasks:
+    - task: threadpool
+      score: 200
+    - task: pargrep
+      score: 200
+
+- group:    Project 2
+  start:    27-10-2021 19:30
+  deadline: 17-11-2021 19:30
+  tasks:
+    - task: orm
+      score: 1
+
+- group:    Iterators & functions
+  start:    20-10-2021 19:30
+  deadline: 03-11-2021 19:30
+  tasks:
+    - task: itertools
+      score: 200
+    - task: fswalk
+      score: 200
+
+- group:    Macros
+  start:    13-10-2021 19:30
+  deadline: 27-10-2021 19:30
+  tasks:
+    - task: stdmacro
+      score: 100
+    - task: gc
+      score: 300
+
+- group:    Smart pointers & interior mutability
+  start:    06-10-2021 19:30
+  deadline: 21-10-2021 19:30
+  tasks:
+    - task: pstack
+      score: 100
+    - task: mpsc
+      score: 100
+    - task: context
+      score: 100
+
+- group:    Project 1
+  start:    29-09-2021 19:30
+  deadline: 21-10-2021 19:30
+  tasks:
+    - task: ripgzip
+      score: 1
+
+- group:    Enums, pattern matching & traits
+  start:    22-09-2021 19:30
+  deadline: 06-10-2021 19:30
+  tasks:
+    - task: polka
+      score: 100
+    - task: trust
+      score: 100
+    - task: flatmap
+      score: 200
+
+- group:    Borrowing & slices
+  start:    15-09-2021 19:30
+  deadline: 30-09-2021 19:30
+  tasks:
+    - task: bst
+      score: 100
+    - task: ini
+      score: 100
+
+- group:    Basics
+  start:    08-09-2021 19:30
+  deadline: 22-09-2021 19:30
+  tasks:
+    - task: comm
+      score: 100
+    - task: puzzle
+      score: 200
+
+- group:    Test
+  start:    01-08-2021 18:00
+  deadline: 13-09-2021 18:00
+  tasks:
+    - task: add
+      score: 0

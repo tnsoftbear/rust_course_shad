@@ -1,0 +1,32 @@
+[workspace]
+members = [
+    # Tasks
+    "add",
+    "comm",
+    "puzzle",
+    "bst",
+    "ini",
+    "polka",
+    "trust",
+    "flatmap",
+    "ripgzip",
+    "pstack",
+    "mpsc",
+    "context",
+    "stdmacro",
+    "gc",
+    "itertools",
+    "fswalk",
+    "orm",
+    "threadpool",
+    "pargrep",
+    "tcp_proxy",
+    "babencoin",
+    "crawler",
+    "chat",
+    "arrayvec",
+    "snapshot",
+
+    # Tools
+    "tools/submit",
+]
