@@ -1,11 +1,12 @@
 #![forbid(unsafe_code)]
 
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::fmt;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Represents a tile on a board. A tile can either be empty or a number from 1 to 8.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Tile(u8);
 
 impl Tile {
@@ -45,6 +46,17 @@ impl Tile {
     }
 }
 
+impl fmt::Display for Tile {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let binding = self.0.to_string();
+        let str = match &self.0 {
+            0 => ".",
+            _ => &binding
+        };
+        write!(f, "{str}")
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Represents a 3x3 board of tiles.
@@ -60,6 +72,15 @@ impl Board {
     ///
     /// Panics if `tiles` contains more than one instance if some tile.
     pub fn new(tiles: [[Tile; 3]; 3]) -> Self {
+        let mut existing_tiles: HashSet<Tile> = HashSet::new();
+        for col in 0..3 {
+            for row in 0..3 {
+                if existing_tiles.contains(&tiles[row][col]) {
+                    panic!("Unexpected tile")
+                }
+                existing_tiles.insert(tiles[row][col]);
+            }
+        }
         Self {
             tiles
         }
@@ -101,9 +122,18 @@ impl Board {
     ///
     /// Panics of `s` is the wrong format or does not represent a valid `Board`.
     pub fn from_string(s: &str) -> Self {
-        for line in s.split("\n") {
-
+        let mut tiles : [[Tile; 3]; 3] = [[Tile::empty(); 3]; 3];
+        for (row, line) in s.split("\n").enumerate() {
+            // println!("{} {}", line, row);
+            for (col, ch) in line.chars().enumerate() {
+                tiles[row][col] = match ch {
+                    '.' => Tile::empty(),
+                    '1'..='8' => Tile::new(Some(ch.to_digit(10).unwrap() as u8)),
+                    _ => panic!("{s}")
+                }
+            }
         }
+        Self::new(tiles)
     }
 
     /// Returns a string representation of this board in the following format:
@@ -114,8 +144,15 @@ impl Board {
     /// 678
     /// '''
     pub fn to_string(&self) -> String {
-        // TODO: your code here.
-        unimplemented!()
+        let mut result: String = String::new();
+        for row in 0..3 {
+            for col in 0..3 {
+                let tile = &self.get(row, col);
+                result += &tile.to_string();
+            }
+            result += "\n";
+        }
+        result
     }
 
     // You might want to add some more methods here.
