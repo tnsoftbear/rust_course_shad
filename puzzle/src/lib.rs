@@ -23,7 +23,7 @@ impl Tile {
         match maybe_value {
             Some(value @ 1..=8) => Self(value),
             None => Self(0),
-            _ => panic!("Tile value must be 1,2,3,4,5,6,7,8")
+            Some(v) => panic!("Tile value must be 1,2,3,4,5,6,7,8, get: {v}")
         }
     }
 
@@ -60,7 +60,7 @@ impl fmt::Display for Tile {
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Represents a 3x3 board of tiles.
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Board {
     tiles: [[Tile; 3]; 3],
 }
@@ -81,6 +81,15 @@ impl Board {
                 existing_tiles.insert(tiles[row][col]);
             }
         }
+
+        // Alternatively:
+        // let set = tiles
+        //     .iter()
+        //     .flatten()
+        //     // .cloned()// С cloned() тип результата будет `HashSet<Tile>`, а не `HashSet<&Tile>`
+        //     .collect::<HashSet<_>>();
+        // assert_eq!(set.len(), 9, "Wrong tiles");
+
         Self {
             tiles
         }
@@ -101,9 +110,9 @@ impl Board {
     ///
     /// Panics if some of `r1`, `r2`, `c1` or `c2` > 2.
     pub fn swap(&mut self, r1: usize, c1: usize, r2: usize, c2: usize) {
-        let tile1 = self.tiles[r1][c1];
-        self.tiles[r1][c1] = self.tiles[r2][c2];
-        self.tiles[r2][c2] = tile1;
+        let tile_tmp = self.get(r1, c1);
+        self.tiles[r1][c1] = self.get(r2, c2);
+        self.tiles[r2][c2] = tile_tmp;
     }
 
     /// Parses `Board` from string.
@@ -124,12 +133,11 @@ impl Board {
     pub fn from_string(s: &str) -> Self {
         let mut tiles : [[Tile; 3]; 3] = [[Tile::empty(); 3]; 3];
         for (row, line) in s.split("\n").enumerate() {
-            // println!("{} {}", line, row);
             for (col, ch) in line.chars().enumerate() {
                 tiles[row][col] = match ch {
                     '.' => Tile::empty(),
-                    '1'..='8' => Tile::new(Some(ch.to_digit(10).unwrap() as u8)),
-                    _ => panic!("{s}")
+                    v @ '1'..='8' => Tile::new(Some(v.to_digit(10).unwrap() as u8)),
+                    v => panic!("Unexpected character: {}", v)
                 }
             }
         }
@@ -155,7 +163,55 @@ impl Board {
         result
     }
 
-    // You might want to add some more methods here.
+    pub fn find_empty_pos(&self) -> (usize, usize) {
+        for row in 0..3 {
+            for col in 0..3 {
+                if self.get(row, col).is_empty() {
+                    return (row, col)
+                }
+            }
+        }
+        panic!("No empty tile on board")
+    }
+
+    pub fn find_neighbour_boards_for_empty_pos(&self) -> Vec<Self> {
+        let (empty_pos_row, empty_pos_col) = self.find_empty_pos();
+        let mut neighbour_positions: HashSet<(usize, usize)> = HashSet::new();
+        if empty_pos_row > 0 {
+            neighbour_positions.insert((empty_pos_row - 1, empty_pos_col));
+            if empty_pos_col > 0 {
+                neighbour_positions.insert((empty_pos_row, empty_pos_col - 1));
+            }
+            if empty_pos_col < 2 {
+                neighbour_positions.insert((empty_pos_row, empty_pos_col + 1));
+            }
+        }
+        if empty_pos_row < 2 {
+            neighbour_positions.insert((empty_pos_row + 1, empty_pos_col));
+            if empty_pos_col > 0 {
+                neighbour_positions.insert((empty_pos_row, empty_pos_col - 1));
+            }
+            if empty_pos_col < 2 {
+                neighbour_positions.insert((empty_pos_row, empty_pos_col + 1));
+            }
+        }
+        let mut neighbour_boards : Vec<Self> = vec![];
+        for (neighbour_row, neighbour_col) in neighbour_positions {
+            let mut neighbour_board = self.clone();
+            neighbour_board.swap(empty_pos_row, empty_pos_col, neighbour_row, neighbour_col);
+            neighbour_boards.push(neighbour_board);
+        }
+        neighbour_boards
+    }
+
+    pub fn is_final(&self) -> bool {
+        let final_board = Board::from_string(
+            "123\n\
+             456\n\
+             78.\n"
+        );
+        return &final_board == self
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -174,6 +230,27 @@ impl Board {
 /// If the board is unsolvable, returns `None`. If the board is already solved,
 /// returns an empty vector.
 pub fn solve(start: Board) -> Option<Vec<Board>> {
-    // TODO: your code here.
-    unimplemented!()
+    let mut checking_boards = VecDeque::from([start]);
+    let mut tree = HashMap::new();
+    tree.insert(start, start);
+    while let Some(checking_board) = checking_boards.pop_front() {
+        if checking_board.is_final() {
+            let mut result_boards = vec![];
+            let mut cur = checking_board;
+            while cur != start {
+                result_boards.push(cur);
+                cur = tree[&cur];
+            }
+            result_boards.reverse();
+            return Some(result_boards)
+        }
+        let neighbour_boards = checking_board.find_neighbour_boards_for_empty_pos();
+        for neighbour_board in neighbour_boards {
+            if !tree.contains_key(&neighbour_board) {
+                tree.insert(neighbour_board, checking_board);
+                checking_boards.push_back(neighbour_board);
+            }
+        }
+    }
+    None
 }
