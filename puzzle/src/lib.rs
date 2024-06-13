@@ -231,23 +231,23 @@ impl Board {
 /// returns an empty vector.
 pub fn solve(start: Board) -> Option<Vec<Board>> {
     let mut checking_boards = VecDeque::from([start]);
-    let mut tree = HashMap::new();
-    tree.insert(start, start);
+    let mut prev_to_next_boards = HashMap::new();
+    prev_to_next_boards.insert(start, start);
     while let Some(checking_board) = checking_boards.pop_front() {
         if checking_board.is_final() {
             let mut result_boards = vec![];
             let mut cur = checking_board;
             while cur != start {
                 result_boards.push(cur);
-                cur = tree[&cur];
+                cur = prev_to_next_boards[&cur];
             }
             result_boards.reverse();
             return Some(result_boards)
         }
         let neighbour_boards = checking_board.find_neighbour_boards_for_empty_pos();
         for neighbour_board in neighbour_boards {
-            if !tree.contains_key(&neighbour_board) {
-                tree.insert(neighbour_board, checking_board);
+            if !prev_to_next_boards.contains_key(&neighbour_board) {
+                prev_to_next_boards.insert(neighbour_board, checking_board);
                 checking_boards.push_back(neighbour_board);
             }
         }
